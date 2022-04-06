@@ -1,32 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { Form, Button, Modal } from 'react-bootstrap';
+import { Form, Button, Modal, Spinner } from 'react-bootstrap';
 
-import { useDispatch } from 'react-redux';
-import { addUserAsync } from './loginSlice';
+import { reset, selectError } from './loginSlice';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { logUser, selectLogStatus } from './loginSlice';
 
 // import styles from './Login.module.css';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
+export default function Login({ onLoginClose, onSetShowToast }) {
   const dispatch = useDispatch();
-
+  const error = useSelector(selectError);
+  const status = useSelector(selectLogStatus);
+  const [email, setEmail] = useState('');
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
+  const [password, setPassword] = useState('');
   const handlePassChange = (e) => {
     setPassword(e.target.value);
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    let data = { email: email, password: password };
-    dispatch(addUserAsync(data)).then((res) =>
-      localStorage.setItem('token', res.data.access)
-    );
+    let data = {
+      email: email,
+      password: password,
+    };
+    dispatch(logUser(data));
   };
 
+  useEffect(() => {
+    if (error) {
+      onSetShowToast(true);
+    } else if (status === 'success') {
+      onLoginClose();
+      dispatch(reset());
+    }
+  }, [error, onSetShowToast, status, dispatch, onLoginClose]);
   return (
     <>
       <Modal.Header>
@@ -40,7 +51,9 @@ export default function Login() {
               type='email'
               placeholder='admin@admin.com'
               name='email'
+              value={email}
               onChange={handleEmailChange}
+              required
             />
           </Form.Group>
           <Form.Group className='mb-3' controlId='formPassword'>
@@ -49,12 +62,27 @@ export default function Login() {
               type='password'
               placeholder='root'
               name='password'
+              value={password}
               onChange={handlePassChange}
+              required
             />
           </Form.Group>
-          <Button variant='primary ' type='submit'>
-            Login
-          </Button>
+          {status === 'loading' ? (
+            <Button variant='primary' disabled>
+              <Spinner
+                as='span'
+                animation='grow'
+                size='sm'
+                role='status'
+                aria-hidden='true'
+              />
+              Loading...
+            </Button>
+          ) : (
+            <Button variant='primary ' type='submit'>
+              Login
+            </Button>
+          )}
         </Form>
       </Modal.Body>
     </>

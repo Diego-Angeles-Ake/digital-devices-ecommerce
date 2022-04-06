@@ -1,20 +1,28 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createAccount } from './loginAPI';
+import { createAccount, logAccount } from './loginAPI';
 
 const initialState = {
   error: '',
-  status: 'idle',
+  logStatus: 'idle',
+  signStatus: 'idle',
 };
 
-export const addUserAsync = createAsyncThunk(
+export const createUser = createAsyncThunk(
   'login/createAccount',
   async (user) => {
     const response = await createAccount(user);
     // The value we return becomes the `fulfilled` action payload
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   }
 );
+
+export const logUser = createAsyncThunk('login/logAccount', async (user) => {
+  const response = await logAccount(user);
+  // The value we return becomes the `fulfilled` action payload
+  // console.log(response.data);
+  return response.data;
+});
 
 export const loginSlice = createSlice({
   name: 'login',
@@ -22,22 +30,48 @@ export const loginSlice = createSlice({
   reducers: {
     reset: (state) => {
       state.error = '';
-      state.status = 'idle';
+      state.logStatus = 'idle';
+      state.signStatus = 'idle';
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(addUserAsync.pending, (state) => {
-        state.status = 'loading';
+      /* --------------------------------- SignUp --------------------------------- */
+      .addCase(createUser.pending, (state) => {
+        state.signStatus = 'loading';
       })
-      .addCase(addUserAsync.fulfilled, (state) => {
-        state.status = 'idle';
+      .addCase(createUser.fulfilled, (state, action) => {
+        state.signStatus = 'success';
+        console.dir(action);
       })
-      .addCase(addUserAsync.rejected, (state, action) => {
-        state.status = 'error';
+      .addCase(createUser.rejected, (state, action) => {
+        state.signStatus = 'error';
+        state.error = action.error.message;
+      })
+      /* ---------------------------------- LogIn --------------------------------- */
+      .addCase(logUser.pending, (state) => {
+        state.logStatus = 'loading';
+      })
+      .addCase(logUser.fulfilled, (state, action) => {
+        state.logStatus = 'success';
+        console.dir(action);
+        localStorage.setItem('token', action.payload.data.token);
+        localStorage.setItem(
+          'user',
+          `${action.payload.data.user.firstName} ${action.payload.data.user.lastName}`
+        );
+      })
+      .addCase(logUser.rejected, (state, action) => {
+        console.dir(action);
+        state.logStatus = 'error';
         state.error = action.error.message;
       });
   },
 });
+
+export const { reset } = loginSlice.actions;
+export const selectLogStatus = (state) => state.login.logStatus;
+export const selectSignStatus = (state) => state.login.signStatus;
+export const selectError = (state) => state.login.error;
 
 export default loginSlice.reducer;

@@ -1,7 +1,8 @@
 // React
 import React from 'react';
-// Styling
-import './App.scss';
+// Bootstrap
+// import './App.scss';
+import 'bootstrap/dist/css/bootstrap.min.css';
 // Components
 import Navigation from './UI/Navbar';
 // Router
@@ -14,7 +15,7 @@ export default function App() {
         <Route index /* path='home' */ element={<Home />} />
         <Route path='purchase' element={<Purchase />} />
         <Route path='shop/:id' element={<Dashboard />} />
-        {/* <Route path='*' element={<Home />} /> */}
+        <Route path='*' element={<NoMatch />} />
       </Route>
     </Routes>
   );
