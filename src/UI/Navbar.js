@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Navbar,
   Container,
@@ -12,14 +12,17 @@ import {
 } from 'react-bootstrap';
 import { BsFillBagCheckFill } from 'react-icons/bs';
 
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Login from '../features/login/Login';
 import SignUp from '../features/signup/SignUp';
 
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { selectError } from '../features/login/loginSlice';
+import {
+  closeLogIn,
+  selectError,
+  selectShowLogIn,
+} from '../features/login/loginSlice';
 
 import { reset } from '../features/login/loginSlice';
 
@@ -30,9 +33,13 @@ export default function Navigation() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const error = useSelector(selectError);
+  const openLogin = useSelector(selectShowLogIn);
   const userLogged = localStorage.getItem('user');
   const [showLogin, setShowLogin] = useState(false);
-  const handleLoginClose = () => setShowLogin(false);
+  const handleLoginClose = () => {
+    dispatch(closeLogIn());
+    setShowLogin(false);
+  };
   const handleLoginShow = () => setShowLogin(true);
 
   const [cartShow, setCartShow] = useState(false);
@@ -57,8 +64,15 @@ export default function Navigation() {
   const handleSignOut = () => {
     localStorage.setItem('token', '');
     localStorage.setItem('user', '');
+    navigate('/');
     setRender(!render);
   };
+
+  useEffect(() => {
+    if (openLogin) {
+      handleLoginShow();
+    }
+  }, [openLogin]);
 
   const popover = (
     <Popover id='popover-basic'>

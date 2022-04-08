@@ -115,11 +115,12 @@ export default function SignUp({ onLogSignToggle, onSetShowToast }) {
               placeholder='Password'
               value={password}
               onChange={handlePassChange}
-              // pattern='^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$'
+              pattern='(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
               required
             />
             <Form.Text className='text-muted'>
-              Minimum eight characters, at least one letter and one number
+              Must contain at least one number and one uppercase and lowercase
+              letter, and at least 8 or more characters
             </Form.Text>
           </Form.Group>
           <Form.Group className='mb-3' controlId='formTelephone'>

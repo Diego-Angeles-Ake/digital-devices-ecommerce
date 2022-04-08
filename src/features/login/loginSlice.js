@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { createAccount, logAccount } from './loginAPI';
 
 const initialState = {
+  showLogin: false,
   error: '',
   logStatus: 'idle',
   signStatus: 'idle',
@@ -32,6 +33,12 @@ export const loginSlice = createSlice({
       state.error = '';
       state.logStatus = 'idle';
       state.signStatus = 'idle';
+    },
+    openLogIn: (state) => {
+      state.showLogin = true;
+    },
+    closeLogIn: (state) => {
+      state.showLogin = false;
     },
   },
   extraReducers: (builder) => {
@@ -69,9 +76,10 @@ export const loginSlice = createSlice({
   },
 });
 
-export const { reset } = loginSlice.actions;
+export const { reset, openLogIn, closeLogIn } = loginSlice.actions;
 export const selectLogStatus = (state) => state.login.logStatus;
 export const selectSignStatus = (state) => state.login.signStatus;
 export const selectError = (state) => state.login.error;
+export const selectShowLogIn = (state) => state.login.showLogin;
 
 export default loginSlice.reducer;

@@ -1,4 +1,4 @@
-import { createApi } from '@reduxjs/toolkit/query';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import axios from 'axios';
 
 const axiosBaseQuery =
@@ -15,9 +15,10 @@ const axiosBaseQuery =
     }
   };
 
-const api = createApi({
+export const apiSlice = createApi({
+  reducerPath: 'api',
   baseQuery: axiosBaseQuery({
-    baseUrl: 'https://ecommerce-exercise-backend.herokuapp.com/',
+    baseUrl: 'https://ecommerce-api-react.herokuapp.com/api/v1',
   }),
   endpoints(build) {
     return {
@@ -25,6 +26,24 @@ const api = createApi({
       mutation: build.mutation({
         query: () => ({ url: '/mutation', method: 'post' }),
       }),
+      getAllProducts: build.query({
+        query: () => ({ url: '/products', method: 'get' }),
+      }),
+      getProductById: build.query({
+        query: (productId) => ({
+          url: `/products/${productId}`,
+          method: 'get',
+        }),
+      }),
+      getCategories: build.query({
+        query: () => ({ url: '/products/categories', method: 'get' }),
+      }),
     };
   },
 });
+
+export const {
+  useGetAllProductsQuery,
+  useGetProductByIdQuery,
+  useGetCategoriesQuery,
+} = apiSlice;
