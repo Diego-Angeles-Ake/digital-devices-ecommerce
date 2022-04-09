@@ -9,7 +9,7 @@ export default function SearchBar() {
   const dispatch = useDispatch();
   const { data, isLoading /* isFetching, isSuccess, isError, error  */ } =
     useGetAllProductsQuery();
-  console.dir(data);
+  // console.dir(data);
   const [productName, setProductName] = useState('');
   const handleProdNameChange = (e) => {
     setProductName(e.target.value);

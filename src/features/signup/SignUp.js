@@ -8,8 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   emailValidation,
   nameValidation,
+  passwordValidation,
   phoneValidation,
-} from '../../utils/emailRegex';
+} from '../../utils/signUpValidation';
 
 // import styles from './SignUp.module.css';
 
@@ -115,7 +116,7 @@ export default function SignUp({ onLogSignToggle, onSetShowToast }) {
               placeholder='Password'
               value={password}
               onChange={handlePassChange}
-              pattern='(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
+              pattern={passwordValidation}
               required
             />
             <Form.Text className='text-muted'>

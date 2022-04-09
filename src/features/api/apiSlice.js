@@ -1,49 +1,77 @@
-import { createApi } from '@reduxjs/toolkit/query/react';
-import axios from 'axios';
-
-const axiosBaseQuery =
-  ({ baseUrl } = { baseUrl: '' }) =>
-  async ({ url, method, data }) => {
-    try {
-      const result = await axios({ url: baseUrl + url, method, data });
-      return { data: result.data };
-    } catch (axiosError) {
-      let err = axiosError;
-      return {
-        error: { status: err.response?.status, data: err.response?.data },
-      };
-    }
-  };
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const apiSlice = createApi({
   reducerPath: 'api',
-  baseQuery: axiosBaseQuery({
+  baseQuery: fetchBaseQuery({
     baseUrl: 'https://ecommerce-api-react.herokuapp.com/api/v1',
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('token');
+
+      // If we have a token set in state, let's assume that we should be passing it.
+      if (token) {
+        headers.set('authorization', `Bearer ${token}`);
+      }
+
+      return headers;
+    },
   }),
-  endpoints(build) {
-    return {
-      query: build.query({ query: () => ({ url: '/query', method: 'get' }) }),
-      mutation: build.mutation({
-        query: () => ({ url: '/mutation', method: 'post' }),
+  tagTypes: ['Cart'],
+  endpoints: (builder) => ({
+    getAllProducts: builder.query({
+      query: () => ({ url: '/products', method: 'get' }),
+    }),
+    getProductById: builder.query({
+      query: (productId) => ({
+        url: `/products/${productId}`,
+        method: 'get',
       }),
-      getAllProducts: build.query({
-        query: () => ({ url: '/products', method: 'get' }),
+    }),
+    getCategories: builder.query({
+      query: () => ({ url: '/products/categories', method: 'get' }),
+    }),
+    getUserCart: builder.query({
+      query: () => ({
+        url: '/cart',
+        method: 'get',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       }),
-      getProductById: build.query({
-        query: (productId) => ({
-          url: `/products/${productId}`,
-          method: 'get',
-        }),
+      providesTags: ['Cart'],
+    }),
+    addProductToCart: builder.mutation({
+      query: (product) => ({
+        url: '/cart',
+        method: 'post',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: product,
       }),
-      getCategories: build.query({
-        query: () => ({ url: '/products/categories', method: 'get' }),
+      invalidatesTags: ['Cart'],
+    }),
+    updateProductInCart: builder.mutation({
+      query: (product) => ({
+        url: '/cart',
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: product,
       }),
-    };
-  },
+      invalidatesTags: ['Cart'],
+    }),
+    removeProductFromCart: builder.mutation({
+      query: (id) => ({
+        url: `/cart/${id}`,
+        method: 'del',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }),
+      invalidatesTags: ['Cart'],
+    }),
+  }),
 });
 
 export const {
   useGetAllProductsQuery,
   useGetProductByIdQuery,
   useGetCategoriesQuery,
+  useGetUserCartQuery,
+  useAddProductToCartMutation,
+  useUpdateProductInCartMutation,
+  useRemoveProductFromCartMutation,
 } = apiSlice;

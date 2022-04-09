@@ -13,7 +13,7 @@ export default function Filters() {
   const [max, setMax] = useState('');
   const dispatch = useDispatch();
   const { data, isLoading } = useGetCategoriesQuery();
-  console.log(data);
+  // console.log(data);
   const handleFilter = (category) => {
     dispatch(filterByCategory(category));
   };

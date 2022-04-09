@@ -9,6 +9,8 @@ import {
   Toast,
   Popover,
   OverlayTrigger,
+  Stack,
+  Card,
 } from 'react-bootstrap';
 import { BsFillBagCheckFill } from 'react-icons/bs';
 
@@ -28,10 +30,16 @@ import { reset } from '../features/login/loginSlice';
 
 import { FcApproval } from 'react-icons/fc';
 import { FcHighPriority } from 'react-icons/fc';
+import thousand from '../utils/thousandSeparator';
+// Cart
+import { useGetUserCartQuery } from '../features/api/apiSlice';
+import { MdRemoveShoppingCart } from 'react-icons/md';
 
 export default function Navigation() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { data, isLoading, isError, isFetching } = useGetUserCartQuery();
+  // console.log(data, isFetching);
   const error = useSelector(selectError);
   const openLogin = useSelector(selectShowLogIn);
   const userLogged = localStorage.getItem('user');
@@ -84,9 +92,16 @@ export default function Navigation() {
       </Popover.Body>
     </Popover>
   );
+  let cartProducts = [];
+  if (data?.data?.cart?.products) {
+    cartProducts = Array.from(data?.data?.cart?.products);
+    cartProducts.sort((a, b) => {
+      return a.id - b.id;
+    });
+  }
 
   return (
-    <Navbar bg='light' expand='lg'>
+    <Navbar bg='light' expand='lg' sticky='top'>
       <Container>
         <Navbar.Brand
           onClick={() => {
@@ -178,12 +193,7 @@ export default function Navigation() {
                 }
               }}
             >
-              {/* <Link
-                to={'/purchase'}
-                style={{ textDecoration: 'none', color: 'rgba(0, 0, 0, 0.55)' }}
-              > */}
               Purchase
-              {/* </Link> */}
             </Nav.Link>
             <Nav.Link variant='primary' onClick={handleCartShow}>
               Cart
@@ -198,9 +208,61 @@ export default function Navigation() {
               <Offcanvas.Header closeButton>
                 <Offcanvas.Title>My Cart</Offcanvas.Title>
               </Offcanvas.Header>
-              <Offcanvas.Body>
-                Some text as placeholder. In real life you can have the elements
-                you have chosen. Like, text, images, lists, etc.
+              <hr />
+              <Offcanvas.Body className='d-flex flex-column'>
+                <Stack gap={3}>
+                  {userLogged && !isLoading && !isError ? (
+                    cartProducts.map((product) => (
+                      <Card
+                        style={{ width: '18rem' }}
+                        key={product.id}
+                        className='align-self-center'
+                      >
+                        <Card.Body>
+                          <Card.Text>{product.brand}</Card.Text>
+                          <Card.Title>{product.title}</Card.Title>
+                          <Card.Text>
+                            Qty: {product.productsInCart.quantity} Price: $
+                            {product.price}
+                          </Card.Text>
+                          <Card.Footer className='d-flex flex-row justify-content-between align-items-baseline'>
+                            <Card.Subtitle>
+                              Total: $
+                              {parseFloat(product.productsInCart.quantity) *
+                                parseFloat(product.price)}
+                            </Card.Subtitle>
+                            <Button variant='danger'>
+                              <MdRemoveShoppingCart />
+                            </Button>
+                          </Card.Footer>
+                        </Card.Body>
+                      </Card>
+                    ))
+                  ) : (
+                    <h1>Log In to add products to your cart</h1>
+                  )}
+                </Stack>
+                <hr />
+
+                <div className='d-flex flex-row align-items-baseline justify-content-between'>
+                  <h4>Total:</h4>
+                  <h4>
+                    $
+                    {userLogged &&
+                      !isLoading &&
+                      !isError &&
+                      thousand(
+                        data.data.cart.products.reduce(
+                          (total, product) =>
+                            total +
+                            parseFloat(product.productsInCart.quantity) *
+                              parseFloat(product.price),
+                          0
+                        )
+                      )}
+                  </h4>
+                </div>
+                <Button>Purchase</Button>
               </Offcanvas.Body>
             </Offcanvas>
           </Nav>
