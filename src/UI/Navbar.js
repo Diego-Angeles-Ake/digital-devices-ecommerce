@@ -33,12 +33,17 @@ import { FcHighPriority } from 'react-icons/fc';
 import thousand from '../utils/thousandSeparator';
 // Cart
 import { useGetUserCartQuery } from '../features/api/apiSlice';
+import { useRemoveProductFromCartMutation } from '../features/api/apiSlice';
 import { MdRemoveShoppingCart } from 'react-icons/md';
 
 export default function Navigation() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data, isLoading, isError, isFetching } = useGetUserCartQuery();
+  const [removeProduct, { isLoading: removingFromCart }] =
+    useRemoveProductFromCartMutation();
+  const { data, isLoading, isError, isFetching, refetch } =
+    useGetUserCartQuery();
+  // console.log(useGetUserCartQuery());
   // console.log(data, isFetching);
   const error = useSelector(selectError);
   const openLogin = useSelector(selectShowLogIn);
@@ -53,6 +58,7 @@ export default function Navigation() {
   const [cartShow, setCartShow] = useState(false);
   const handleCartClose = () => setCartShow(false);
   const handleCartShow = () => {
+    refetch();
     if (userLogged) {
       setCartShow(true);
     } else {
@@ -76,12 +82,17 @@ export default function Navigation() {
     setRender(!render);
   };
 
+  const handleRemoveFromCart = async (id) => {
+    await removeProduct(id).unwrap();
+  };
   useEffect(() => {
     if (openLogin) {
       handleLoginShow();
     }
   }, [openLogin]);
-
+  const handleGotoPurchase = () => {
+    navigate('purchase');
+  };
   const popover = (
     <Popover id='popover-basic'>
       <Popover.Header as='h3'>Welcome back {userLogged}</Popover.Header>
@@ -101,173 +112,195 @@ export default function Navigation() {
   }
 
   return (
-    <Navbar bg='light' expand='lg' sticky='top'>
-      <Container>
-        <Navbar.Brand
-          onClick={() => {
-            navigate('/');
-          }}
-        >
-          {/* <Link to={'/'} style={{ textDecoration: 'none' }}> */}
-          <BsFillBagCheckFill size='2.5em' color='black' />
-          {/* </Link> */}
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls='navbar-nav' />
-        <Navbar.Collapse id='navbar-nav' className='justify-content-end'>
-          <Nav>
-            {!userLogged ? (
-              <Nav.Link variant='primary' onClick={handleLoginShow}>
-                Login
-              </Nav.Link>
-            ) : (
-              <OverlayTrigger
-                trigger='click'
-                placement='bottom'
-                overlay={popover}
-              >
-                <Nav.Link variant='success'>{userLogged}</Nav.Link>
-              </OverlayTrigger>
-            )}
-            <Modal
-              show={showLogin}
-              onHide={handleLoginClose}
-              backdrop='static'
-              keyboard={false}
-            >
-              <Toast
-                onClose={(e) => {
-                  dispatch(reset());
-                  setShowToast(false);
-                }}
-                show={showToast}
-                animation={false}
-                delay={3000}
-                autohide
-              >
-                <Toast.Header>
-                  {!error ? <FcApproval /> : <FcHighPriority />}
-                  <strong className='me-auto'>Authorization</strong>
-                  {!error && <small>You can log in now!</small>}
-                </Toast.Header>
-                <Toast.Body>
-                  {error || 'Your account has been successfully created'}
-                </Toast.Body>
-              </Toast>
-              {showLogSign ? (
-                <Login
-                  onLoginClose={handleLoginClose}
-                  onSetShowToast={setShowToast}
-                />
+    <>
+      <Navbar bg='light' expand='lg' sticky='top'>
+        <Container>
+          <Navbar.Brand
+            onClick={() => {
+              navigate('/');
+            }}
+          >
+            {/* <Link to={'/'} style={{ textDecoration: 'none' }}> */}
+            <BsFillBagCheckFill size='2.5em' color='black' />
+            {/* </Link> */}
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls='navbar-nav' />
+          <Navbar.Collapse id='navbar-nav' className='justify-content-end'>
+            <Nav>
+              {!userLogged ? (
+                <Nav.Link variant='primary' onClick={handleLoginShow}>
+                  Login
+                </Nav.Link>
               ) : (
-                <SignUp
-                  onLogSignToggle={handleLogSignToggle}
-                  onSetShowToast={setShowToast}
-                />
+                <OverlayTrigger
+                  trigger='click'
+                  placement='bottom'
+                  overlay={popover}
+                >
+                  <Nav.Link variant='success'>{userLogged}</Nav.Link>
+                </OverlayTrigger>
               )}
-              <Modal.Footer className='d-flex justify-content-between'>
-                <h5>
-                  {showLogSign
-                    ? "Don't have an account?"
-                    : 'Already have an account?'}
-                </h5>
-                <div>
-                  <Button
-                    className='mx-3'
-                    variant='secondary'
-                    onClick={handleLoginClose}
-                  >
-                    Close
-                  </Button>
-                  <Button variant='primary' onClick={handleLogSignToggle}>
-                    {showLogSign ? 'Sign Up' : 'Log In'}
-                  </Button>
-                </div>
-              </Modal.Footer>
-            </Modal>
-            <Nav.Link
-              onClick={() => {
-                if (userLogged) {
-                  navigate('/purchase');
-                } else {
-                  handleLoginShow();
-                }
-              }}
-            >
-              Purchase
-            </Nav.Link>
-            <Nav.Link variant='primary' onClick={handleCartShow}>
-              Cart
-            </Nav.Link>
-            <Offcanvas
-              show={cartShow}
-              onHide={handleCartClose}
-              placement='end'
-              backdrop={false}
-              scroll={true}
-            >
-              <Offcanvas.Header closeButton>
-                <Offcanvas.Title>My Cart</Offcanvas.Title>
-              </Offcanvas.Header>
-              <hr />
-              <Offcanvas.Body className='d-flex flex-column'>
-                <Stack gap={3}>
-                  {userLogged && !isLoading && !isError ? (
-                    cartProducts.map((product) => (
-                      <Card
-                        style={{ width: '18rem' }}
-                        key={product.id}
-                        className='align-self-center'
-                      >
-                        <Card.Body>
-                          <Card.Text>{product.brand}</Card.Text>
-                          <Card.Title>{product.title}</Card.Title>
-                          <Card.Text>
-                            Qty: {product.productsInCart.quantity} Price: $
-                            {product.price}
-                          </Card.Text>
-                          <Card.Footer className='d-flex flex-row justify-content-between align-items-baseline'>
-                            <Card.Subtitle>
-                              Total: $
-                              {parseFloat(product.productsInCart.quantity) *
-                                parseFloat(product.price)}
-                            </Card.Subtitle>
-                            <Button variant='danger'>
-                              <MdRemoveShoppingCart />
-                            </Button>
-                          </Card.Footer>
-                        </Card.Body>
-                      </Card>
-                    ))
-                  ) : (
-                    <h1>Log In to add products to your cart</h1>
-                  )}
-                </Stack>
+              <Modal
+                show={showLogin}
+                onHide={handleLoginClose}
+                backdrop='static'
+                keyboard={false}
+              >
+                <Toast
+                  onClose={(e) => {
+                    dispatch(reset());
+                    setShowToast(false);
+                  }}
+                  show={showToast}
+                  animation={false}
+                  delay={3000}
+                  autohide
+                >
+                  <Toast.Header>
+                    {!error ? <FcApproval /> : <FcHighPriority />}
+                    <strong className='me-auto'>Authorization</strong>
+                    {!error && <small>You can log in now!</small>}
+                  </Toast.Header>
+                  <Toast.Body>
+                    {error || 'Your account has been successfully created'}
+                  </Toast.Body>
+                </Toast>
+                {showLogSign ? (
+                  <Login
+                    onLoginClose={handleLoginClose}
+                    onSetShowToast={setShowToast}
+                  />
+                ) : (
+                  <SignUp
+                    onLogSignToggle={handleLogSignToggle}
+                    onSetShowToast={setShowToast}
+                  />
+                )}
+                <Modal.Footer className='d-flex justify-content-between'>
+                  <h5>
+                    {showLogSign
+                      ? "Don't have an account?"
+                      : 'Already have an account?'}
+                  </h5>
+                  <div>
+                    <Button
+                      className='mx-3'
+                      variant='secondary'
+                      onClick={handleLoginClose}
+                    >
+                      Close
+                    </Button>
+                    <Button variant='primary' onClick={handleLogSignToggle}>
+                      {showLogSign ? 'Sign Up' : 'Log In'}
+                    </Button>
+                  </div>
+                </Modal.Footer>
+              </Modal>
+              <Nav.Link
+                onClick={() => {
+                  if (userLogged) {
+                    navigate('/purchase');
+                  } else {
+                    handleLoginShow();
+                  }
+                }}
+              >
+                Purchase
+              </Nav.Link>
+              <Nav.Link variant='primary' onClick={handleCartShow}>
+                Cart
+              </Nav.Link>
+              <Offcanvas
+                show={cartShow}
+                onHide={handleCartClose}
+                placement='end'
+                backdrop={false}
+                scroll={true}
+              >
+                <Offcanvas.Header closeButton>
+                  <Offcanvas.Title>My Cart</Offcanvas.Title>
+                </Offcanvas.Header>
                 <hr />
-
-                <div className='d-flex flex-row align-items-baseline justify-content-between'>
-                  <h4>Total:</h4>
-                  <h4>
-                    $
-                    {userLogged &&
-                      !isLoading &&
-                      !isError &&
-                      thousand(
-                        data.data.cart.products.reduce(
-                          (total, product) =>
-                            total +
-                            parseFloat(product.productsInCart.quantity) *
-                              parseFloat(product.price),
-                          0
-                        )
-                      )}
-                  </h4>
-                </div>
-                <Button>Purchase</Button>
-              </Offcanvas.Body>
-            </Offcanvas>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+                <Offcanvas.Body className='d-flex flex-column'>
+                  <Stack gap={3}>
+                    {userLogged && !isLoading && !isError ? (
+                      cartProducts.map((product) => (
+                        <Card
+                          style={{ width: '18rem' }}
+                          key={product.id}
+                          className='align-self-center'
+                        >
+                          <Card.Body>
+                            <Card.Text>{product.brand}</Card.Text>
+                            <Card.Title>{product.title}</Card.Title>
+                            <Card.Text>
+                              Qty: {product.productsInCart.quantity} Price: $
+                              {product.price}
+                            </Card.Text>
+                            <Card.Footer className='d-flex flex-row justify-content-between align-items-baseline'>
+                              <Card.Subtitle>
+                                Total: $
+                                {parseFloat(product.productsInCart.quantity) *
+                                  parseFloat(product.price)}
+                              </Card.Subtitle>
+                              <Button
+                                variant='danger'
+                                onClick={() => {
+                                  handleRemoveFromCart(product.id);
+                                }}
+                              >
+                                <MdRemoveShoppingCart />
+                              </Button>
+                            </Card.Footer>
+                          </Card.Body>
+                        </Card>
+                      ))
+                    ) : (
+                      <h4>No products</h4>
+                    )}
+                  </Stack>
+                  <Container
+                    style={{
+                      position: 'absolute',
+                      top: '100vh',
+                      transform: 'translateY(-100%)',
+                      width: '90%',
+                      background: 'white',
+                    }}
+                  >
+                    <Container className='d-flex flex-row align-items-baseline justify-content-between'>
+                      <h4>Total:</h4>
+                      <h4>
+                        $
+                        {userLogged &&
+                          !isLoading &&
+                          !isError &&
+                          thousand(
+                            data.data.cart.products.reduce(
+                              (total, product) =>
+                                total +
+                                parseFloat(product.productsInCart.quantity) *
+                                  parseFloat(product.price),
+                              0
+                            )
+                          )}
+                      </h4>
+                    </Container>
+                    <Container>
+                      <Button
+                        onClick={handleGotoPurchase}
+                        style={{ width: '100%' }}
+                      >
+                        Purchase
+                      </Button>
+                    </Container>
+                  </Container>
+                </Offcanvas.Body>
+              </Offcanvas>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+    </>
   );
 }

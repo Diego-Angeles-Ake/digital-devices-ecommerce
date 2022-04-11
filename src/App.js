@@ -1,7 +1,7 @@
 // React
 import React from 'react';
 // Bootstrap
-import './App.scss';
+import './custom.scss';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // Components
 import Layout from './features/layout/Layout';

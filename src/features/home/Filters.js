@@ -51,7 +51,7 @@ export default function Filters() {
                   <Form onSubmit={handlePriceFilter}>
                     <Form.Group
                       className='mb-3 d-flex flex-row'
-                      controlId='formPrice'
+                      // controlId='formPrice'
                     >
                       <Form.Control
                         className='me-1'

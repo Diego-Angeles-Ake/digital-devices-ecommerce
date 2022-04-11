@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGetAllProductsQuery } from '../api/apiSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -11,8 +11,11 @@ import thousand from '../../utils/thousandSeparator';
 import { useAddProductToCartMutation } from '../api/apiSlice';
 import { useUpdateProductInCartMutation } from '../api/apiSlice';
 import { useGetUserCartQuery } from '../api/apiSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProductList() {
+  const navigate = useNavigate();
+  const [currentUpdate, setCurrentUpdate] = useState(null);
   const [addToCart, { isLoading: addingToCart }] =
     useAddProductToCartMutation();
   const {
@@ -37,9 +40,12 @@ export default function ProductList() {
   const handleAddToCart = async (id, quantity = 1) => {
     if (userLogged) {
       try {
+        setCurrentUpdate(id);
+        console.log({ id, quantity });
         await addToCart({ id, quantity }).unwrap();
+        setCurrentUpdate(null);
       } catch (err) {
-        // console.error('Failed to add to cart: ', err);
+        console.error('Failed to add to cart: ', err);
         if (err.data.message === 'You already added this product to the cart') {
           const updatedProduct = cart.data.cart.products.filter(
             (product) => product.id === id
@@ -48,7 +54,9 @@ export default function ProductList() {
           try {
             const updata = { id, newQuantity: current_qty + 1 };
             // console.log(updata);
+            setCurrentUpdate(id);
             await updateCart(updata).unwrap();
+            setCurrentUpdate(null);
           } catch (err) {
             // console.error('Failed to add to cart: ', err);
           }
@@ -57,6 +65,10 @@ export default function ProductList() {
     } else {
       dispatch(openLogIn());
     }
+  };
+
+  const handleGotoProduct = (id) => {
+    navigate(`shop/${id}`);
   };
 
   return (
@@ -70,7 +82,13 @@ export default function ProductList() {
       ) : (
         products.map((product) => {
           return (
-            <div key={product.id} className='d-flex flex-row flex-wrap'>
+            <div
+              key={product.id}
+              className='d-flex flex-row flex-wrap'
+              onClick={() => {
+                handleGotoProduct(product.id);
+              }}
+            >
               <Card style={{ width: '17rem' }} className='me-4 my-2'>
                 <div className='img-container'>
                   <Card.Img
@@ -106,14 +124,25 @@ export default function ProductList() {
                       </Card.Text>
                     </Col>
                     <Col className='d-flex justify-content-end'>
-                      {gettingCart || addingToCart || updatingCart ? (
-                        <Spinner animation='border' role='status'>
+                      {(gettingCart || addingToCart || updatingCart) &&
+                      currentUpdate === product.id ? (
+                        <Button variant='none' disabled>
+                          <Spinner
+                            as='span'
+                            animation='border'
+                            size='md'
+                            role='status'
+                            aria-hidden='true'
+                          />
                           <span className='visually-hidden'>Loading...</span>
-                        </Spinner>
+                        </Button>
                       ) : (
                         <Button
                           variant='none'
-                          onClick={() => handleAddToCart(product.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddToCart(product.id);
+                          }}
                         >
                           <AiOutlineShoppingCart color='black' size='3.5vmin' />
                         </Button>

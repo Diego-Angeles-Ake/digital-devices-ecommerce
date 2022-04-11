@@ -7,7 +7,6 @@ export const apiSlice = createApi({
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token');
 
-      // If we have a token set in state, let's assume that we should be passing it.
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }
@@ -16,6 +15,7 @@ export const apiSlice = createApi({
     },
   }),
   tagTypes: ['Cart'],
+  /* --------------------------- products endpoints --------------------------- */
   endpoints: (builder) => ({
     getAllProducts: builder.query({
       query: () => ({ url: '/products', method: 'get' }),
@@ -26,14 +26,15 @@ export const apiSlice = createApi({
         method: 'get',
       }),
     }),
+    /* -------------------------- categories endpoints -------------------------- */
     getCategories: builder.query({
       query: () => ({ url: '/products/categories', method: 'get' }),
     }),
+    /* ----------------------------- cart endpoints ----------------------------- */
     getUserCart: builder.query({
       query: () => ({
         url: '/cart',
         method: 'get',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       }),
       providesTags: ['Cart'],
     }),
@@ -41,7 +42,6 @@ export const apiSlice = createApi({
       query: (product) => ({
         url: '/cart',
         method: 'post',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: product,
       }),
       invalidatesTags: ['Cart'],
@@ -50,7 +50,6 @@ export const apiSlice = createApi({
       query: (product) => ({
         url: '/cart',
         method: 'PATCH',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: product,
       }),
       invalidatesTags: ['Cart'],
@@ -58,8 +57,7 @@ export const apiSlice = createApi({
     removeProductFromCart: builder.mutation({
       query: (id) => ({
         url: `/cart/${id}`,
-        method: 'del',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        method: 'DELETE',
       }),
       invalidatesTags: ['Cart'],
     }),
