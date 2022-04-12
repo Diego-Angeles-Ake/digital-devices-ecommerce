@@ -1,4 +1,4 @@
-$primary: #98179c;
+$primary: #1765be;
 $container-max-widths: (
   sm: 540px,
   md: 720px,
@@ -6,8 +6,17 @@ $container-max-widths: (
   xl: 1140px,
   xxl: 1840px,
 );
+$font-family-base: 'Roboto', sans-serif;
+$nav-link-color: white !important;
+$nav-link-hover-color: rgb(168, 168, 168) !important;
 
+$accordion-button-active-bg: #666;
+$accordion-button-active-color: #ffffff;
+$navbar-light-toggler-icon-bg: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='#ffffff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
+$navbar-light-toggler-border-color: rgba(white, 0.1);
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 @import '../node_modules/bootstrap/scss/bootstrap';
+$font-family-base: 'Roboto', sans-serif;
 
 .img-container:hover .card-img-overlay {
   opacity: 1;
@@ -24,4 +33,8 @@ $container-max-widths: (
 
 html {
   font-size: calc(10px + 1vmin);
+}
+
+.nav-link:focus {
+  color: white !important;
 }

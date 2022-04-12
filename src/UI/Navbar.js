@@ -116,7 +116,7 @@ export default function Navigation() {
 
   return (
     <>
-      <Navbar bg='light' expand='lg' sticky='top'>
+      <Navbar bg='primary' expand='lg' sticky='top'>
         <Container>
           <Navbar.Brand
             onClick={() => {
@@ -124,14 +124,14 @@ export default function Navigation() {
             }}
           >
             {/* <Link to={'/'} style={{ textDecoration: 'none' }}> */}
-            <BsFillBagCheckFill size='2.5em' color='black' />
+            <BsFillBagCheckFill size='2.5em' color='white' />
             {/* </Link> */}
           </Navbar.Brand>
           <Navbar.Toggle aria-controls='navbar-nav' />
           <Navbar.Collapse id='navbar-nav' className='justify-content-end'>
             <Nav>
               {!userLogged ? (
-                <Nav.Link variant='primary' onClick={handleLoginShow}>
+                <Nav.Link /* variant='primary' */ onClick={handleLoginShow}>
                   Login
                 </Nav.Link>
               ) : (

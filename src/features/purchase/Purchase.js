@@ -43,7 +43,7 @@ export default function Purchase() {
                     <Card.Body>
                       <Card.Title>
                         {new Date(purchase.createdAt).toLocaleDateString(
-                          undefined,
+                          'en-US',
                           {
                             weekday: 'long',
                             year: 'numeric',
@@ -67,12 +67,10 @@ export default function Purchase() {
                               <Col
                                 xs={3}
                                 xl={3}
-                                className='d-flex flex-column flex-xxl-row'
+                                className='d-flex flex-column flex-xxl-row align-items-center justify-content-xxl-center'
                               >
-                                <span>
-                                  <b>Quantity:</b>{' '}
-                                  {product.productsInCart.quantity}
-                                </span>
+                                <b>Quantity:&nbsp;</b>
+                                <span>{product.productsInCart.quantity}</span>
                               </Col>
                               <Col
                                 xs={3}
