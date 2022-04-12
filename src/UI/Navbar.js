@@ -34,15 +34,16 @@ import thousand from '../utils/thousandSeparator';
 // Cart
 import { useGetUserCartQuery } from '../features/api/apiSlice';
 import { useRemoveProductFromCartMutation } from '../features/api/apiSlice';
+import { usePurchaseCartMutation } from '../features/api/apiSlice';
 import { MdRemoveShoppingCart } from 'react-icons/md';
 
 export default function Navigation() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [removeProduct, { isLoading: removingFromCart }] =
-    useRemoveProductFromCartMutation();
-  const { data, isLoading, isError, isFetching, refetch } =
-    useGetUserCartQuery();
+
+  const [removeProduct] = useRemoveProductFromCartMutation();
+  const [purchaseCart] = usePurchaseCartMutation();
+  const { data, isLoading, isError, refetch } = useGetUserCartQuery();
   // console.log(useGetUserCartQuery());
   // console.log(data, isFetching);
   const error = useSelector(selectError);
@@ -90,8 +91,10 @@ export default function Navigation() {
       handleLoginShow();
     }
   }, [openLogin]);
-  const handleGotoPurchase = () => {
-    navigate('purchase');
+  const handleGotoPurchase = async () => {
+    await purchaseCart().unwrap();
+    navigate('/purchase');
+    refetch();
   };
   const popover = (
     <Popover id='popover-basic'>

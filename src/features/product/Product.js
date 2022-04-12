@@ -22,16 +22,9 @@ export default function Product() {
   const handleChangeQty = (e) => {
     setQuantity(e.target.value);
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('hi');
-  };
+
   const navigate = useNavigate();
-  const {
-    data: cart,
-    isLoading: gettingCart,
-    isError: cartError,
-  } = useGetUserCartQuery();
+  const { data: cart, isLoading: gettingCart } = useGetUserCartQuery();
   const [addToCart, { isLoading: addingToCart }] =
     useAddProductToCartMutation();
   const [updateCart, { isLoading: updatingCart }] =
@@ -57,7 +50,10 @@ export default function Product() {
     console.log(allProds);
     allProducts = [...allProds.data.products];
     allProducts = allProducts.filter((prod) => {
-      return product.data.product.category === prod.category.name;
+      return (
+        product.data.product.category === prod.category.name &&
+        product.data.product.id !== prod.id
+      );
     });
   }
   console.log(cart);
@@ -196,7 +192,7 @@ export default function Product() {
       )}
 
       <Row className='justify-content-center mt-5'>
-        <h3>Other users have bought</h3>
+        <h3>Customers who bought this item also bought</h3>
         <Container className='d-flex flex-wrap'>
           {allProducts.map((product) => {
             return (

@@ -6,6 +6,7 @@ const initialState = {
   error: '',
   logStatus: 'idle',
   signStatus: 'idle',
+  token: localStorage.getItem('token'),
 };
 
 export const createUser = createAsyncThunk(
@@ -62,6 +63,7 @@ export const loginSlice = createSlice({
       .addCase(logUser.fulfilled, (state, action) => {
         state.logStatus = 'success';
         console.dir(action);
+        state.token = action.payload.data.token;
         localStorage.setItem('token', action.payload.data.token);
         localStorage.setItem(
           'user',

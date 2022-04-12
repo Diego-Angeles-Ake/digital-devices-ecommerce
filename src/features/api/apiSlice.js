@@ -4,8 +4,8 @@ export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://ecommerce-api-react.herokuapp.com/api/v1',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token');
+    prepareHeaders: (headers, { getState }) => {
+      const token = getState().login.token;
 
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
@@ -14,7 +14,7 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Cart'],
+  tagTypes: ['Cart', 'Purchase'],
   /* --------------------------- products endpoints --------------------------- */
   endpoints: (builder) => ({
     getAllProducts: builder.query({
@@ -61,6 +61,22 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Cart'],
     }),
+    /* --------------------------- purchase endpoints --------------------------- */
+    purchaseCart: builder.mutation({
+      query: (purchase) => ({
+        url: '/purchases',
+        method: 'POST',
+        body: purchase,
+      }),
+      invalidatesTags: ['Purchase'],
+    }),
+    getUserPurchases: builder.query({
+      query: () => ({
+        url: '/purchases',
+        method: 'get',
+      }),
+      providesTags: ['Purchase'],
+    }),
   }),
 });
 
@@ -72,4 +88,6 @@ export const {
   useAddProductToCartMutation,
   useUpdateProductInCartMutation,
   useRemoveProductFromCartMutation,
+  usePurchaseCartMutation,
+  useGetUserPurchasesQuery,
 } = apiSlice;
