@@ -7,8 +7,6 @@ import { reset, selectError } from './loginSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { logUser, selectLogStatus } from './loginSlice';
 
-// import styles from './Login.module.css';
-
 export default function Login({ onLoginClose, onSetShowToast }) {
   const dispatch = useDispatch();
   const error = useSelector(selectError);
@@ -49,7 +47,7 @@ export default function Login({ onLoginClose, onSetShowToast }) {
             <Form.Label>Email address</Form.Label>
             <Form.Control
               type='email'
-              placeholder='admin@admin.com'
+              placeholder='Email'
               name='email'
               value={email}
               onChange={handleEmailChange}
@@ -60,7 +58,7 @@ export default function Login({ onLoginClose, onSetShowToast }) {
             <Form.Label>Password</Form.Label>
             <Form.Control
               type='password'
-              placeholder='root'
+              placeholder='Password'
               name='password'
               value={password}
               onChange={handlePassChange}

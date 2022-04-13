@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// Bootstrap
 import {
   Navbar,
   Container,
@@ -12,13 +13,18 @@ import {
   Stack,
   Card,
 } from 'react-bootstrap';
+// Icons
 import { BsFillBagCheckFill } from 'react-icons/bs';
 import { MdOutlineShoppingCart } from 'react-icons/md';
 import { BsCartCheck } from 'react-icons/bs';
+import { FcApproval } from 'react-icons/fc';
+import { FcHighPriority } from 'react-icons/fc';
+import { MdRemoveShoppingCart } from 'react-icons/md';
+// Router
 import { useNavigate } from 'react-router-dom';
 import Login from '../features/login/Login';
 import SignUp from '../features/signup/SignUp';
-
+// Redux
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import {
@@ -26,17 +32,12 @@ import {
   selectError,
   selectShowLogIn,
 } from '../features/login/loginSlice';
-
-import { reset } from '../features/login/loginSlice';
-
-import { FcApproval } from 'react-icons/fc';
-import { FcHighPriority } from 'react-icons/fc';
-import thousand from '../utils/thousandSeparator';
-// Cart
 import { useGetUserCartQuery } from '../features/api/apiSlice';
 import { useRemoveProductFromCartMutation } from '../features/api/apiSlice';
 import { usePurchaseCartMutation } from '../features/api/apiSlice';
-import { MdRemoveShoppingCart } from 'react-icons/md';
+import { reset } from '../features/login/loginSlice';
+// Utils
+import thousand from '../utils/thousandSeparator';
 
 export default function Navigation() {
   const dispatch = useDispatch();
@@ -45,8 +46,6 @@ export default function Navigation() {
   const [removeProduct] = useRemoveProductFromCartMutation();
   const [purchaseCart] = usePurchaseCartMutation();
   const { data, isLoading, isError, refetch } = useGetUserCartQuery();
-  // console.log(useGetUserCartQuery());
-  // console.log(data, isFetching);
   const error = useSelector(selectError);
   const openLogin = useSelector(selectShowLogIn);
   const userLogged = localStorage.getItem('user');
@@ -124,17 +123,13 @@ export default function Navigation() {
               navigate('/');
             }}
           >
-            {/* <Link to={'/'} style={{ textDecoration: 'none' }}> */}
             <BsFillBagCheckFill size='2.5em' color='white' />
-            {/* </Link> */}
           </Navbar.Brand>
           <Navbar.Toggle aria-controls='navbar-nav' />
           <Navbar.Collapse id='navbar-nav' className='justify-content-end'>
             <Nav>
               {!userLogged ? (
-                <Nav.Link /* variant='primary' */ onClick={handleLoginShow}>
-                  Login
-                </Nav.Link>
+                <Nav.Link onClick={handleLoginShow}>Login</Nav.Link>
               ) : (
                 <OverlayTrigger
                   trigger='click'
@@ -187,14 +182,14 @@ export default function Navigation() {
                       : 'Already have an account?'}
                   </h5>
                   <div>
-                    <Button
-                      className='mx-3'
-                      variant='secondary'
-                      onClick={handleLoginClose}
-                    >
+                    <Button variant='secondary' onClick={handleLoginClose}>
                       Close
                     </Button>
-                    <Button variant='primary' onClick={handleLogSignToggle}>
+                    <Button
+                      variant='primary'
+                      className='mx-3'
+                      onClick={handleLogSignToggle}
+                    >
                       {showLogSign ? 'Sign Up' : 'Log In'}
                     </Button>
                   </div>

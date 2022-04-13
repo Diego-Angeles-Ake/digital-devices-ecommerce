@@ -47,7 +47,6 @@ export default function Product() {
   } = useGetAllProductsQuery();
 
   if (prodsLoaded && !errorProds && !isLoading) {
-    // console.log(allProds);
     allProducts = [...allProds.data.products];
     allProducts = allProducts.filter((prod) => {
       return (
@@ -56,7 +55,6 @@ export default function Product() {
       );
     });
   }
-  // console.log(cart);
   const handleGotoProduct = (id) => {
     navigate(`/shop/${id}`);
   };
@@ -65,9 +63,7 @@ export default function Product() {
     if (userLogged) {
       try {
         setCurrentUpdate(id);
-        // console.log({ id, quantity });
         const tempQty = parseInt(quantity);
-        // console.log(id, tempQty);
         await addToCart({ id, tempQty }).unwrap();
         setCurrentUpdate(null);
       } catch (err) {
@@ -76,19 +72,17 @@ export default function Product() {
           const updatedProduct = cart.data.cart.products.filter(
             (product) => product.id === id
           );
-          // console.log(cart);
           const current_qty = updatedProduct[0].productsInCart.quantity;
           try {
             const updata = {
               id,
               newQuantity: current_qty + parseInt(quantity),
             };
-            // console.log(updata);
             setCurrentUpdate(id);
             await updateCart(updata).unwrap();
             setCurrentUpdate(null);
           } catch (err) {
-            // console.error('Failed to add to cart: ', err);
+            console.error('Failed to add to cart: ', err);
           }
         }
       }
@@ -125,7 +119,6 @@ export default function Product() {
                     }}
                   >
                     <img
-                      // className='d-block w-100'
                       style={{
                         display: 'block',
                         objectFit: 'contain',
@@ -154,7 +147,6 @@ export default function Product() {
                 <Form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    // console.log(product.data.product.id);
                     handleAddToCart(product.data.product.id, quantity);
                   }}
                   id='qtyForm'
@@ -178,7 +170,7 @@ export default function Product() {
                 </Form>
               </Col>
             </Row>
-            {/*  */}
+
             <Button
               variant='primary'
               type='submit'

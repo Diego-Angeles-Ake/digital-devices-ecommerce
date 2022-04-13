@@ -7,9 +7,7 @@ import { filterByName } from './homeSlice';
 
 export default function SearchBar() {
   const dispatch = useDispatch();
-  const { data, isLoading /* isFetching, isSuccess, isError, error  */ } =
-    useGetAllProductsQuery();
-  // console.dir(data);
+  const { data, isLoading } = useGetAllProductsQuery();
   const [productName, setProductName] = useState('');
   const handleProdNameChange = (e) => {
     setProductName(e.target.value);

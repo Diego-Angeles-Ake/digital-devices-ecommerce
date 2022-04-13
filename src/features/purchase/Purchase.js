@@ -10,10 +10,7 @@ export default function Purchase() {
     isError,
     isSuccess,
   } = useGetUserPurchasesQuery(null, { refetchOnMountOrArgChange: true });
-  // useEffect(() => {
-  //   refetch();
-  // }, [refetch]);
-  // console.log(purchases);
+
   return isLoading ? (
     <Container
       className='d-flex justify-content-center align-items-center'
@@ -51,7 +48,6 @@ export default function Purchase() {
                       </Card.Title>
                       <Card.Text>
                         {purchase.cart.products.map((product) => {
-                          // console.log(product);
                           return (
                             <Row className='mb-2'>
                               <Col

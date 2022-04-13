@@ -1,8 +1,6 @@
-// React
 import React from 'react';
 // Bootstrap
 import './custom.scss';
-// import 'bootstrap/dist/css/bootstrap.min.css';
 // Components
 import Layout from './features/layout/Layout';
 import Home from './features/home/Home';
@@ -17,7 +15,7 @@ export default function App() {
   return (
     <Routes>
       <Route path='/' element={<Layout />}>
-        <Route index /* path='home' */ element={<Home />} />
+        <Route index element={<Home />} />
         <Route element={<ProtectedRoutes />}>
           <Route path='/purchase' element={<Purchase />} />
         </Route>

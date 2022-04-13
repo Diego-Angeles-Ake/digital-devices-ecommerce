@@ -13,16 +13,12 @@ export const createUser = createAsyncThunk(
   'login/createAccount',
   async (user) => {
     const response = await createAccount(user);
-    // The value we return becomes the `fulfilled` action payload
-    // console.log(response.data);
     return response.data;
   }
 );
 
 export const logUser = createAsyncThunk('login/logAccount', async (user) => {
   const response = await logAccount(user);
-  // The value we return becomes the `fulfilled` action payload
-  // console.log(response.data);
   return response.data;
 });
 

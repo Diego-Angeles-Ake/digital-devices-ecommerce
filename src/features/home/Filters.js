@@ -13,7 +13,6 @@ export default function Filters() {
   const [max, setMax] = useState('');
   const dispatch = useDispatch();
   const { data, isLoading } = useGetCategoriesQuery();
-  // console.log(data);
   const handleFilter = (category) => {
     dispatch(filterByCategory(category));
   };
@@ -49,10 +48,7 @@ export default function Filters() {
                 <Accordion.Header>Price</Accordion.Header>
                 <Accordion.Body>
                   <Form onSubmit={handlePriceFilter}>
-                    <Form.Group
-                      className='mb-3 d-flex flex-row'
-                      // controlId='formPrice'
-                    >
+                    <Form.Group className='mb-3 d-flex flex-row'>
                       <Form.Control
                         className='me-1'
                         type='number'

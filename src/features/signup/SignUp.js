@@ -12,8 +12,6 @@ import {
   phoneValidation,
 } from '../../utils/signUpValidation';
 
-// import styles from './SignUp.module.css';
-
 export default function SignUp({ onLogSignToggle, onSetShowToast }) {
   const status = useSelector(selectSignStatus);
   const error = useSelector(selectError);

@@ -18,19 +18,13 @@ export default function ProductList() {
   const [currentUpdate, setCurrentUpdate] = useState(null);
   const [addToCart, { isLoading: addingToCart }] =
     useAddProductToCartMutation();
-  const {
-    data: cart,
-    isLoading: gettingCart,
-    // isError: cartError,
-  } = useGetUserCartQuery();
+  const { data: cart, isLoading: gettingCart } = useGetUserCartQuery();
   const [updateCart, { isLoading: updatingCart }] =
     useUpdateProductInCartMutation();
   const products = useSelector(selectDisplayedProducts);
   const userLogged = localStorage.getItem('user');
   const dispatch = useDispatch();
-  const { data, isLoading, isSuccess /* isFetching, isError, error  */ } =
-    useGetAllProductsQuery();
-  //   console.log(allProductsData);
+  const { data, isLoading, isSuccess } = useGetAllProductsQuery();
   useEffect(() => {
     if (isSuccess) {
       dispatch(setProducts(data.data.products));
@@ -53,12 +47,11 @@ export default function ProductList() {
           const current_qty = updatedProduct[0].productsInCart.quantity;
           try {
             const updata = { id, newQuantity: current_qty + 1 };
-            // console.log(updata);
             setCurrentUpdate(id);
             await updateCart(updata).unwrap();
             setCurrentUpdate(null);
           } catch (err) {
-            // console.error('Failed to add to cart: ', err);
+            console.error('Failed to add to cart: ', err);
           }
         }
       }
