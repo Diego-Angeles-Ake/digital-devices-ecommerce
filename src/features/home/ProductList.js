@@ -5,13 +5,13 @@ import { useSelector } from 'react-redux';
 import { selectDisplayedProducts } from './homeSlice';
 import { setProducts } from './homeSlice';
 import { Container, Spinner, Card, Button, Row, Col } from 'react-bootstrap';
-import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { openLogIn } from '../login/loginSlice';
 import thousand from '../../utils/thousandSeparator';
 import { useAddProductToCartMutation } from '../api/apiSlice';
 import { useUpdateProductInCartMutation } from '../api/apiSlice';
 import { useGetUserCartQuery } from '../api/apiSlice';
 import { useNavigate } from 'react-router-dom';
+import { MdOutlineAddShoppingCart } from 'react-icons/md';
 
 export default function ProductList() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ export default function ProductList() {
   const {
     data: cart,
     isLoading: gettingCart,
-    isError: cartError,
+    // isError: cartError,
   } = useGetUserCartQuery();
   const [updateCart, { isLoading: updatingCart }] =
     useUpdateProductInCartMutation();
@@ -82,14 +82,19 @@ export default function ProductList() {
       ) : (
         products.map((product) => {
           return (
-            <div
+            <Col
+              xs={12}
+              xxl={4}
               key={product.id}
-              className='d-flex flex-row flex-wrap'
+              className='d-flex flex-column justify-content-start align-items-baseline align-items-center flex-xxl-row'
               onClick={() => {
                 handleGotoProduct(product.id);
               }}
             >
-              <Card style={{ width: '17rem' }} className='me-4 my-2'>
+              <Card
+                style={{ width: '100%', height: '95%' }}
+                className='me-4 my-2'
+              >
                 <div className='img-container'>
                   <Card.Img
                     variant='top'
@@ -144,14 +149,17 @@ export default function ProductList() {
                             handleAddToCart(product.id);
                           }}
                         >
-                          <AiOutlineShoppingCart color='black' size='3.5vmin' />
+                          <MdOutlineAddShoppingCart
+                            color='black'
+                            size='1.8em'
+                          />
                         </Button>
                       )}
                     </Col>
                   </Row>
                 </Card.Body>
               </Card>
-            </div>
+            </Col>
           );
         })
       )}

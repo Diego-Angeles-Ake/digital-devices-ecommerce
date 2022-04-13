@@ -13,7 +13,8 @@ import {
   Card,
 } from 'react-bootstrap';
 import { BsFillBagCheckFill } from 'react-icons/bs';
-
+import { MdOutlineShoppingCart } from 'react-icons/md';
+import { BsCartCheck } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import Login from '../features/login/Login';
 import SignUp from '../features/signup/SignUp';
@@ -211,7 +212,7 @@ export default function Navigation() {
                 Purchase
               </Nav.Link>
               <Nav.Link variant='primary' onClick={handleCartShow}>
-                Cart
+                <MdOutlineShoppingCart size='1.5em' />
               </Nav.Link>
               <Offcanvas
                 show={cartShow}
@@ -294,7 +295,7 @@ export default function Navigation() {
                         onClick={handleGotoPurchase}
                         style={{ width: '100%' }}
                       >
-                        Purchase
+                        Purchase <BsCartCheck />
                       </Button>
                     </Container>
                   </Container>

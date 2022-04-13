@@ -21,7 +21,8 @@ export default function Home() {
         </Col>
         <Col xs={12} xxl={9} /*  style={{ minWidth: '75vw' }} */>
           <Row
-          /* style={{ background: '#89BD9E' }} */
+            /* style={{ background: '#89BD9E' }} */
+            className='d-flex justify-content-center'
           >
             <SearchBar />
           </Row>

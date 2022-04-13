@@ -47,7 +47,7 @@ export default function Product() {
   } = useGetAllProductsQuery();
 
   if (prodsLoaded && !errorProds && !isLoading) {
-    console.log(allProds);
+    // console.log(allProds);
     allProducts = [...allProds.data.products];
     allProducts = allProducts.filter((prod) => {
       return (
@@ -56,7 +56,7 @@ export default function Product() {
       );
     });
   }
-  console.log(cart);
+  // console.log(cart);
   const handleGotoProduct = (id) => {
     navigate(`/shop/${id}`);
   };
@@ -65,9 +65,9 @@ export default function Product() {
     if (userLogged) {
       try {
         setCurrentUpdate(id);
-        console.log({ id, quantity });
+        // console.log({ id, quantity });
         const tempQty = parseInt(quantity);
-        console.log(id, tempQty);
+        // console.log(id, tempQty);
         await addToCart({ id, tempQty }).unwrap();
         setCurrentUpdate(null);
       } catch (err) {
@@ -76,7 +76,7 @@ export default function Product() {
           const updatedProduct = cart.data.cart.products.filter(
             (product) => product.id === id
           );
-          console.log(cart);
+          // console.log(cart);
           const current_qty = updatedProduct[0].productsInCart.quantity;
           try {
             const updata = {
@@ -196,14 +196,19 @@ export default function Product() {
         <Container className='d-flex flex-wrap'>
           {allProducts.map((product) => {
             return (
-              <div
+              <Col
+                xs={12}
+                xxl={4}
                 key={product.id}
-                className='d-flex justify-content-start align-items-baseline'
+                className='d-flex flex-column justify-content-start align-items-baseline align-items-center flex-xxl-row'
                 onClick={() => {
                   handleGotoProduct(product.id);
                 }}
               >
-                <Card style={{ width: '17rem' }} className='me-4 my-2'>
+                <Card
+                  style={{ width: '100%', height: '95%' }}
+                  className='me-4 my-2'
+                >
                   <div className='img-container'>
                     <Card.Img
                       variant='top'
@@ -268,7 +273,7 @@ export default function Product() {
                     </Row>
                   </Card.Body>
                 </Card>
-              </div>
+              </Col>
             );
           })}
         </Container>
